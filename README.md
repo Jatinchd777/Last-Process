@@ -1,6 +1,6 @@
 # Last Process
 
-Minimal 2D platformer prototype built in Rust with [Bevy](https://bevyengine.org/) 0.20.0.
+Minimal 2D platformer prototype built in Rust with macroquad
 
 ## Gameplay
 
