@@ -1,11 +1,10 @@
 # Last Process
 
-A tiny 2D platformer prototype built with [Bevy](https://bevyengine.org/) 0.20.
+Minimal 2D platformer prototype built in Rust with [Bevy](https://bevyengine.org/) 0.20.0.
 
 ## Gameplay
 
-Run and jump across a small set of platforms. The current build is a physics
-sandbox — there are no enemies, goals, or menus yet.
+The current build is a small physics sandbox: move a single player capsule across a platform layout and jump between elevated surfaces. There are no enemies, collectibles, level transitions, UI, or art/audio assets in use yet.
 
 ## Controls
 
@@ -15,7 +14,7 @@ sandbox — there are no enemies, goals, or menus yet.
 | Move right | `D` / `→` |
 | Jump | `Space` / `W` / `↑` |
 
-Jumping only works while grounded.
+Jump input is only accepted while the player is grounded.
 
 ## Running
 
@@ -23,30 +22,34 @@ Requires a recent stable [Rust](https://rustup.rs/) toolchain.
 
 ```sh
 cargo run            # debug build
-cargo run --release  # faster
+cargo run --release  # optimized build
 ```
 
-## How it works
+## Architecture
 
-Everything lives in `src/main.rs`:
+The entire game logic lives in `src/main.rs`.
 
-- **Player** — a 40×64 solid-color sprite with a velocity and `grounded` flag.
-- **Physics** — custom AABB collision with gravity (`1800`), move speed (`300`),
-  and jump speed (`650`). Horizontal movement stops at platform sides; falling
-  players land on platform tops.
-- **Platforms** — a floor and two rising platforms, spawned from `setup`.
-- **Systems** — `setup` runs once at startup; `player_movement` runs every frame.
+- `Player` component: a 40×64 sprite with `velocity: Vec2` and `grounded: bool`.
+- `Platform` component: rectangular collision volumes with a `size: Vec2`.
+- `setup`: spawns the camera, player, floor, and two elevated platforms.
+- `player_movement`: runs each frame and handles:
+  - horizontal input and acceleration
+  - jump state checks
+  - gravity (`1800.0`)
+  - custom AABB collision against platform edges and tops
+  - landing detection when falling intersects a platform surface
+
+Physics is manually resolved rather than using a full rigid-body or physics engine; the player is treated as a rectangular body moving through a static platform set.
 
 ## Project layout
 
-```
-src/main.rs     Game code and constants
-assets/         Placeholder folders for sprites, audio, fonts, levels
-tests/          Empty (integration tests TBD)
-Cargo.toml      Bevy 0.20 dependency
+```text
+src/main.rs   Game scene, components, input handling, custom collision logic
+assets/      Reserved for future sprites, audio, fonts, and levels
+tests/       No integration tests yet
+Cargo.toml    Rust package manifest with Bevy 0.20.0
 ```
 
 ## Status
 
-Early prototype. Art and audio assets are not used yet; all visuals are
-colored rectangles.
+Early prototype. All visuals are flat colored rectangles, and the project is still a single-scene physics test rather than a complete game.
